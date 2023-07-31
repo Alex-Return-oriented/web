@@ -1,26 +1,26 @@
 FROM debian
 
-# ¸üĞÂÈí¼ş°üÁĞ±í
+# æ›´æ–°è½¯ä»¶åŒ…åˆ—è¡¨
 RUN apt update
 
-# °²×°±ØÒªµÄÈí¼ş°ü
+# å®‰è£…å¿…è¦çš„è½¯ä»¶åŒ…
 RUN DEBIAN_FRONTEND=noninteractive apt install qemu-kvm *zenhei* xz-utils dbus-x11 curl firefox-esr gnome-system-monitor mate-system-monitor  git xfce4 xfce4-terminal tightvncserver wget -y
 
-# ÏÂÔØnoVNCºÍProot
+# ä¸‹è½½noVNCå’ŒProot
 RUN wget https://github.com/novnc/noVNC/archive/refs/tags/v1.2.0.tar.gz
 RUN curl -LO https://proot.gitlab.io/proot/bin/proot
 RUN chmod 755 proot
 RUN mv proot /bin
 
-# ½âÑ¹noVNC
+# è§£å‹noVNC
 RUN tar -xvf v1.2.0.tar.gz
 
-# ´´½¨VNCÃÜÂëÎÄ¼ş
+# åˆ›å»ºVNCå¯†ç æ–‡ä»¶
 RUN mkdir $HOME/.vnc
 RUN echo 'luo' | vncpasswd -f > $HOME/.vnc/passwd
 RUN chmod 600 $HOME/.vnc/passwd
 
-# ´´½¨Æô¶¯½Å±¾luo.sh
+# åˆ›å»ºå¯åŠ¨è„šæœ¬luo.sh
 RUN echo 'whoami' >> /luo.sh
 RUN echo 'cd' >> /luo.sh
 RUN echo "su -l -c 'vncserver :2000 -geometry 1280x800'" >> /luo.sh
@@ -28,14 +28,8 @@ RUN echo 'cd /noVNC-1.2.0' >> /luo.sh
 RUN echo './utils/launch.sh --vnc localhost:7900 --listen 8900' >> /luo.sh
 RUN chmod 755 /luo.sh
 
-# °²×°Nginx
-RUN apt install nginx -y
-
-# ¸´ÖÆÍøÕ¾´úÂëµ½ÈİÆ÷ÖĞ
-COPY your_website_directory /usr/share/nginx/html
-
-# ÉùÃ÷ÈİÆ÷½«¼àÌı¶Ë¿Ú8900
+# å£°æ˜å®¹å™¨å°†ç›‘å¬ç«¯å£8900
 EXPOSE 8900
 
-# Æô¶¯VNCºÍnoVNC Web¿Í»§¶Ë
+# å¯åŠ¨VNCå’ŒnoVNC Webå®¢æˆ·ç«¯
 CMD /luo.sh
